@@ -14,7 +14,7 @@ jobs:
           command: python analysis.py  
       - run:
           name: Run unit tests
-          command: pytest  
+          command:  python3 -m pytest Tests  
 
 workflows:
   version: 2
