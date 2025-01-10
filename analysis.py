@@ -136,6 +136,48 @@ plt.clf()
 
 """-------------------------------------------------------------------------------"""
 
+# Convert Date to datetime
+data['Date'] = pd.to_datetime(data['Date'], format='%d/%m/%Y')
+
+# get the month and day
+data['Month'] = data['Date'].dt.month
+data['Day'] = data['Date'].dt.day
+
+# Create month-day pairs for December and January
+data['MonthDay'] = data['Date'].dt.strftime('%m-%d')
+
+# Filter for December and January only
+winter_accidents = data[data['Month'].isin([12, 1])]
+
+# Count accidents by month-day
+daily_counts = winter_accidents.groupby('MonthDay').size().reset_index()
+daily_counts.columns = ['Date', 'Accidents']
+
+daily_counts['Date'] = pd.to_datetime(daily_counts['Date'], format='%m-%d')
+daily_counts = daily_counts.sort_values('Date')
+
+plt.figure(figsize=(12, 6))
+plt.plot(range(len(daily_counts)), daily_counts['Accidents'], marker='o')
+
+plt.xticks(range(0, len(daily_counts), 5), 
+          daily_counts['Date'].dt.strftime('%b %d')[::5], 
+          rotation=45)
+
+plt.title('Daily Accident Counts (December-January)')
+plt.xlabel('Date')
+plt.ylabel('Number of Accidents')
+
+# Add vertical line for Christmas day
+christmas_idx = daily_counts[daily_counts['Date'].dt.strftime('%m-%d') == '12-25'].index
+plt.axvline(x=christmas_idx[0], color='r', linestyle='--', label='Christmas')
+plt.legend()
+
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+#plt.show()
+plt.savefig('Visualisations/Christmas_day_crashes.png', bbox_inches='tight')
+plt.clf()
+
 # Text file with statistics (mean,standard deviation, min/max values..)
 with open('Visualisations/Statisticss.txt', "w") as file:
     # Description for Yearly Breakdown
@@ -154,4 +196,10 @@ with open('Visualisations/Statisticss.txt', "w") as file:
     file.write("Distribution of Crashes by Road Class and Type:\n")
     road_class_type_description = road_class_type_counts.describe()
     file.write(road_class_type_description.to_string())
+    file.write("\n\n")
+
+    # Description for Daily Accident Counts (December-January)
+    file.write("Daily Accident Counts (December-January):\n")
+    daily_counts_description = daily_counts.describe()  
+    file.write(daily_counts_description.to_string())
     file.write("\n\n")
