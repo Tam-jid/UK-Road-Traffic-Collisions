@@ -88,6 +88,54 @@ plt.savefig('Visualisations/Accidents_by_hour.png', bbox_inches='tight')
 plt.clf()
 """-------------------------------------------------------------------------------"""
 
+# 3. Distribution of crashes by road class and type
+
+# Combine A(M) with Motorway data as a(m) is a motorway and there is an insignificant amount of incidents
+data_modified = data.copy()
+data_modified['1st_Road_Class'] = data_modified['1st_Road_Class'].replace('A(M)', 'Motorway')
+
+# Group the modified data
+road_class_type_counts = data_modified.groupby(['1st_Road_Class', 'Road_Type']).size().unstack(fill_value=0)
+
+# Sort the data by total crashes
+road_class_type_counts['Total'] = road_class_type_counts.sum(axis=1)
+road_class_type_counts = road_class_type_counts.sort_values('Total', ascending=True)
+road_class_type_counts = road_class_type_counts.drop('Total', axis=1)
+
+sns.set_theme(style="whitegrid")
+fig, ax = plt.subplots(figsize=(12, 8))
+
+colors = sns.color_palette("husl", n_colors=len(road_class_type_counts.columns))
+road_class_type_counts.plot(kind='barh', stacked=True, ax=ax, color=colors)
+
+# add titles, labels, etc.
+plt.title('Distribution of Crashes by Road Class and Type', pad=20, fontsize=14)
+plt.xlabel('Number of Crashes', fontsize=12)
+plt.ylabel('Road Class', fontsize=12)
+
+# Add exact value labels on the bars
+def add_labels(ax, road_class_type_counts):
+    for i in range(len(road_class_type_counts.index)):
+        total = road_class_type_counts.iloc[i].sum()
+        ax.text(total + 100, i, f'Total: {total:,}', 
+                va='center', fontsize=10)
+
+add_labels(ax, road_class_type_counts)
+
+# Add legend
+plt.legend(title='Road Type', bbox_to_anchor=(1.05, 1), loc='upper left', 
+          frameon=True, title_fontsize=12)
+
+# Add gridlines
+ax.grid(axis='x', linestyle='--', alpha=0.7)
+
+plt.tight_layout()
+plt.savefig('Visualisations/Crashes_by_road_class_type.png', bbox_inches='tight')
+#plt.show()
+plt.clf()
+
+"""-------------------------------------------------------------------------------"""
+
 # Text file with statistics (mean,standard deviation, min/max values..)
 with open('Visualisations/Statisticss.txt', "w") as file:
     # Description for Yearly Breakdown
@@ -100,4 +148,10 @@ with open('Visualisations/Statisticss.txt', "w") as file:
     file.write("Heatmap of Accidents by Hour and Day of the Week:\n")
     heatmap_description = heatmap_data.describe()
     file.write(heatmap_description.to_string())
+    file.write("\n\n")
+
+    # Description for Distribution of Crashes by Road Class and Type
+    file.write("Distribution of Crashes by Road Class and Type:\n")
+    road_class_type_description = road_class_type_counts.describe()
+    file.write(road_class_type_description.to_string())
     file.write("\n\n")
