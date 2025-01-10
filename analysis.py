@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
 import pandas as pd
-data = pd.read_csv('Dataset/Student Depression Dataset.csv')
+import numpy as np
+import seaborn as sns
+data = pd.read_csv('filtered_accident_data.csv')
 print(data.head())
