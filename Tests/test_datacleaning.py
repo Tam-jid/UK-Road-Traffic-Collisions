@@ -1,7 +1,7 @@
 import pandas as pd
 
 def filter_csv():
-    df = pd.read_csv('accident_data.csv')
+    df = pd.read_csv('Dataset/accident_data.csv')
 
     #filter out rows where 'accident severity' is 'slight'
     filtered_df = df[df['Accident_Severity'] != 'Slight']
