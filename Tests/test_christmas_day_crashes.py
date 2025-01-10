@@ -1,6 +1,6 @@
 import os
 
 def test_daily_accident_counts_exists():
-    """Check if the Daily Accident Counts visualisation exists."""
-    file_path = "Visualisations/Daily_accident_counts.png"
+    """Check if the Christmas day crashes visualisation exists."""
+    file_path = "Visualisations/Christmas_day_crashes.png"
     assert os.path.isfile(file_path), f"File {file_path} does not exist."

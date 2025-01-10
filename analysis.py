@@ -198,7 +198,7 @@ with open('Visualisations/Statisticss.txt', "w") as file:
     file.write(road_class_type_description.to_string())
     file.write("\n\n")
 
-    # Description for Daily Accident Counts (December-January)
+    # Description for Christmas day crashes (December-January)
     file.write("Daily Accident Counts (December-January):\n")
     daily_counts_description = daily_counts.describe()  
     file.write(daily_counts_description.to_string())
